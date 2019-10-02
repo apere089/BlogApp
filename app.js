@@ -70,6 +70,24 @@ app.get('/blogs/:id/edit', (req, res) => {
 			res.render('edit', {blog: blog});
 	});
 });
+//UPDATE route
+app.put('/blogs/:id', (req, res) => {
+	Blog.findByIdAndUpdate(req.params.id, req.body.blog, (err, blog) => {
+		if(err)
+			res.redirect('/blogs');
+		else
+			res.redirect('/blogs/' + req.params.id);
+	});
+});
+//DELETE route
+app.delete('/blogs/:id', (req, res) => {
+	Blog.findByIdAndRemove(req.params.id, (err) => {
+		if(err)
+			res.redirect('/blogs');
+		else
+			res.redirect('/blogs');	//For now. Todo later
+	});
+});
 
 app.listen(3000, () => {
 	console.log('Blog Server Started - Listening on Port 3000');
