@@ -1,14 +1,18 @@
-const express    = require('express'),
-			app        = express(),
-			bodyParser = require('body-parser'),
-			mongoose   = require('mongoose');
+const bodyParser = require('body-parser'),
+methodOverride   = require('method-override'),
+mongoose   		   = require('mongoose'),
+express 				 = require('express'),
+app        			 = express();
 
 //App Config
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
+app.use(methodOverride('_method'));
 
+//Mongoose Config
 mongoose.connect('mongodb://localhost:27017/blog_app', {useUnifiedTopology: true, useNewUrlParser: true});
+mongoose.set('useFindAndModify', false);
 
 //MongoDb Config
 const blogSchema = mongoose.Schema({
@@ -21,7 +25,8 @@ const blogSchema = mongoose.Schema({
 	}
 });
 var Blog = mongoose.model('Blog', blogSchema);
-//Routes
+
+//ROUTES
 app.get('/', (req, res) => {
 	res.redirect('/blogs');
 });
@@ -54,6 +59,15 @@ app.get('/blogs/:id', (req, res) => {
 			res.redirect('/blogs');
 		else
 			res.render('show', {blog: blog});
+	});
+});
+//EDIT route
+app.get('/blogs/:id/edit', (req, res) => {
+	Blog.findById(req.params.id, (err, blog) => {
+		if(err)
+			res.redirect('/blogs');
+		else
+			res.render('edit', {blog: blog});
 	});
 });
 
